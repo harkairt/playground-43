@@ -40,8 +40,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "server": "npm start --prefix server",
-    "server:dev": "npm run dev --prefix server"
+    "serve": "expo serve",
+    "deploy:development": "npx expo export -p web && npx eas-cli@latest deploy --alias development",
+    "deploy:preview": "npx expo export -p web && npx eas-cli@latest deploy --alias preview",
+    "deploy:production": "npx expo export -p web && npx eas-cli@latest deploy --prod"
   },
   "private": true
 }
