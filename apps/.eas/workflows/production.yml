@@ -1,0 +1,22 @@
+name: Production
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  deploy_web:
+    name: Deploy Web
+    type: deploy
+    params:
+      alias: production
+      prod: true
+
+  build_android:
+    name: Build Android
+    needs: [deploy_web]
+    type: build
+    env:
+      EXPO_PUBLIC_API_URL: ${{ needs.deploy_web.outputs.deploy_url }}
+    params:
+      platform: android
+      profile: production

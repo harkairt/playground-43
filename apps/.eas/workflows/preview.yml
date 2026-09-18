@@ -1,0 +1,22 @@
+name: Preview
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  deploy_web:
+    name: Deploy Web
+    type: deploy
+    params:
+      alias: preview
+
+  build_android:
+    name: Build Android
+    needs: [deploy_web]
+    type: build
+    env:
+      EXPO_PUBLIC_API_URL: ${{ needs.deploy_web.outputs.deploy_url }}
+    params:
+      platform: android
+      profile: preview
