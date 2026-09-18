@@ -37,6 +37,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b33b67ec-0b3c-4a5a-8897-92a66c296ad0"
+      }
+    },
+    "owner": "tamas.harkai"
   }
 }
