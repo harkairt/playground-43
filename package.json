@@ -3,6 +3,8 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@trpc/client": "^11.1.0",
+    "@trpc/server": "^11.1.0",
     "@expo/ui": "~57.0.18",
     "expo": "~57.0.23",
     "expo-constants": "~57.0.18",
@@ -37,7 +39,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "server": "npm start --prefix server",
+    "server:dev": "npm run dev --prefix server"
   },
   "private": true
 }

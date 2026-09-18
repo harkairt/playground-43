@@ -1,5 +1,6 @@
 import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AnimatedIcon } from '@/components/animated-icon';
@@ -8,6 +9,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { trpc } from '@/lib/trpc';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -28,7 +30,23 @@ function getDevMenuHint() {
   );
 }
 
+type ServerStatus =
+  | { state: 'loading' }
+  | { state: 'success'; timestamp: string; message: string }
+  | { state: 'error'; error: string };
+
 export default function HomeScreen() {
+  const [status, setStatus] = useState<ServerStatus>({ state: 'loading' });
+
+  useEffect(() => {
+    trpc.currentData
+      .query()
+      .then((data) => setStatus({ state: 'success', ...data }))
+      .catch((err) =>
+        setStatus({ state: 'error', error: err instanceof Error ? err.message : String(err) })
+      );
+  }, []);
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -37,6 +55,24 @@ export default function HomeScreen() {
           <ThemedText type="title" style={styles.title}>
             Welcome to&nbsp;Expo
           </ThemedText>
+        </ThemedView>
+
+        <ThemedView type="backgroundElement" style={styles.serverContainer}>
+          <ThemedText type="smallBold">Server connection</ThemedText>
+          {status.state === 'loading' && <ActivityIndicator />}
+          {status.state === 'success' && (
+            <>
+              <ThemedText type="small" themeColor="textSecondary">
+                {status.message}
+              </ThemedText>
+              <ThemedText type="code">{status.timestamp}</ThemedText>
+            </>
+          )}
+          {status.state === 'error' && (
+            <ThemedText type="small" style={styles.errorText}>
+              {status.error}
+            </ThemedText>
+          )}
         </ThemedView>
 
         <ThemedText type="code" style={styles.code}>
@@ -94,5 +130,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.four,
     borderRadius: Spacing.four,
+  },
+  serverContainer: {
+    gap: Spacing.two,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.three,
+    borderRadius: Spacing.four,
+  },
+  errorText: {
+    color: '#e54545',
   },
 });
